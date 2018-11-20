@@ -1,0 +1,35 @@
+//from: https://stackoverflow.com/questions/1898203/calculate-exponents-via-addition-only
+
+#include <iostream>
+using namespace std;
+
+float myMul(float x, float y)
+{
+  cout << x << endl;
+  float product = 0.0;
+
+    for (float i = 0.0; i<x; i++)
+       product += y;
+
+    return product;
+}
+
+float power(float x, float exponent)
+{
+ cout << x << endl;
+
+  float result = 1.0;
+
+    for (float i = 0.0; i < exponent; i++){
+        result = myMul(result, x);
+        //        cout << result << endl;
+    }
+    return result;
+}
+
+int main(){
+  float output = power(2.71, 10);
+  cout << output << endl;
+
+  return 0;
+}
