@@ -1,12 +1,12 @@
 @variables
 .equ SWI_Exit,  0x11
  e:
-    .float 2.718
+    .float .25
  zero:
     .float 0
     
 _start:
-    LDR  r0, 2 @set base
+    LDR  r0, e @set base
     MOV  r1, #3 @set exponent
 
     MOV  r2, #1 @set power result to 0
@@ -35,4 +35,4 @@ mulLoop: @for(int j = r7, j < r2, j++)
 
 
 end:
-    swi  SWI_Exit
+    SWI  SWI_Exit
