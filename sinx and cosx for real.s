@@ -5,10 +5,13 @@
 
 
 startAngle: @angle to do operations on
-	.int 45 @starting with 45 degrees because its simple
+	@.int 45 @starting with 45 degrees because its simple
+	@45.5 from his email
+	.int 2981888
 
 ag_const:
-	.float 0.6072529350
+	@.float 0.6072529350
+	.int 39796
 	
 @currAngle
 @	.float 28.027
@@ -46,5 +49,6 @@ loop: @for(int i = 0, i < 12, i++) r1 is 1, r2 is 12
 	
 	.data
 @A:	.word 45.0, 26.565, 14.0362, 7.12502, 3.57633, 1.78991, 0.895174, 0.447614, 0.223811, 0.111906, 0.055953, 0.027977
-A:	.word 1, 3, 5, 7, 9
+A: .word 2949120, 1740963, 919876, 466945, 234378, 117303, 58666, 29334, 14667, 7333, 3666, 1833
+@A:	.word 1, 3, 5, 7, 9
 	.end
