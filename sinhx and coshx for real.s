@@ -30,6 +30,7 @@ ag_const:
 	
 main:
 	LDR r0, startAngle 		@load the starting angle into r1
+	LSL r0, r0, #16 		@shift left by 16 bits, basically multiply by 2^16
 	MOV r1, #0 				@index i for for loop
 	MOV r2, #12 			@hardcoded index @end index for foor loop, length of lookup table
 	LDR r3, ag_const		@ X in C example
