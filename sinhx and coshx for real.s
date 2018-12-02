@@ -29,7 +29,7 @@ A:  .word 1740970 ,919879 ,466945 ,234379 ,117304 ,58666 ,29334 ,14667 ,7333 ,36
 
 @angle to do operations on
 startAngle: 
-	.long 2981888 				@starting with 45.5 degrees because its simple
+	.long 938731 			@starting with 14.3239 degrees because its simple
 	
 ag_const:
 	.long 79134 			@1.20749613601 shifted left by 16 bits
@@ -38,15 +38,15 @@ main:
 	LDR r0, startAngle 		@load the starting angle into r1
 	MOV r1, #1 				@index i for for loop
 	MOV r2, #13 			@hardcoded index @end index for foor loop, length of lookup table
-	LDR r3, ag_const		@ X in C example
-	MOV r4, #0		 		@ Y in C example
-	LDR r6, =A		 		@ address of alpha
+	LDR r3, ag_const		@X in C example
+	MOV r4, #0		 		@Y in C example
+	LDR r6, =A		 		@address of alpha
 
-@for(int i = 0, i < 12, i++) r1 is i, r2 is 12
+@for(int i = 1, i < 13, i++) r1 is i, r2 is 13
 loop:
 	CMP r0, #0 				@compare to see if the current angle is greater than 0
-	BGE greater_than 		@ if the angle is greater than 0
-	BLE less_than 	 		@ 
+	BGE greater_than 		@if the angle is greater than 0
+	BLE less_than 	 		@
 
 after_if:
 	ADD r1, #1 				@increment i
@@ -56,51 +56,55 @@ after_if:
 
 @if the current angle is less than 0
 less_than: 
-	ASR r5, r4, r1 			@ (Y >>i)
-	SUB r5, r3, r5 			@ NewX = X - (Y >> i)
-	ASR r8, r3, r1 			@ (X >> i)
-	SUB r4, r4, r8 			@ (Y -= (X >> i)
-	CMP r1, #4
+	ASR r5, r4, r1 			@(Y >>i)
+	SUB r5, r3, r5 			@NewX = X - (Y >> i)
+	ASR r8, r3, r1 			@(X >> i)
+	SUB r4, r4, r8 			@(Y -= (X >> i)
+	MOV r3, r5 				@X = NewX
+	CMP r1, #4				@Repeat loop if on the 3k+1th iteration
 	BEQ repeatG
 finL:
-	MOV r3, r5 				@ X = NewX
 	ADD r9, r1, r1 			@gotta add i by 4 so it can be used as A[i] correctly
 	ADD r9, r9, r9 			@^^
-	LDR r7, [r6, r9] 		@ load Alpha[i] into r7
-	ADD r0, r0, r7 			@ CurrAngle += Alpha[i]
+	LDR r7, [r6, r9] 		@load Alpha[i] into r7
+	ADD r0, r0, r7 			@CurrAngle += Alpha[i]
 	
 	B after_if
 
-@if the current angle is greater than 0, r5 is NewX
+@if the current angle is greater than 0
 greater_than:
-	ASR r5, r4, r1 			@ (Y >>i)
-	ADD r5, r3, r5 			@ NewX = X + (Y >> i)
-	ASR r8, r3, r1 			@ (X >> i)
-	ADD r4, r4, r8 			@ (Y += (X >> i)	
-	CMP r1, #4
+	ASR r5, r4, r1 			@(Y >>i)
+	ADD r5, r3, r5 			@NewX = X + (Y >> i)
+	ASR r8, r3, r1 			@(X >> i)
+	ADD r4, r4, r8 			@(Y += (X >> i)	
+	MOV r3, r5 				@X = NewX
+	CMP r1, #4				@Repeat loop if on the 3k+1th iteration
 	BEQ repeatG
 finG:
-	MOV r3, r5 				@ X = NewX
 	ADD r9, r1, r1 			@gotta add i by 4 so it can be used as A[i] correctly
 	ADD r9, r9, r9 			@^^
-	LDR r7, [r6, r9] 		@ load Alpha[i] into r7
-	SUB r0, r0, r7 			@ CurrAngle -= Alpha[i]
+	LDR r7, [r6, r9] 		@load Alpha[i] into r7
+	SUB r0, r0, r7 			@CurrAngle -= Alpha[i]
 	
 	B after_if
 	
 	
+@simple repeat	
 repeatG:
-	ASR r5, r4, r1 			@ (Y >>i)
-	ADD r5, r3, r5 			@ NewX = X + (Y >> i)
-	ASR r8, r3, r1 			@ (X >> i)
-	ADD r4, r4, r8 			@ (Y += (X >> i)
+	ASR r5, r4, r1 			@(Y >>i)
+	ADD r5, r3, r5 			@NewX = X + (Y >> i)
+	ASR r8, r3, r1 			@(X >> i)
+	ADD r4, r4, r8 			@(Y += (X >> i)	
+	MOV r3, r5 				@X = NewX
 	B   finG
 
+@simple repeat
 repeatL:
-	ASR r5, r4, r1 			@ (Y >>i)
-	SUB r5, r3, r5 			@ NewX = X - (Y >> i)
-	ASR r8, r3, r1 			@ (X >> i)
-	SUB r4, r4, r8 			@ (Y -= (X >> i)
+	ASR r5, r4, r1 			@(Y >>i)
+	SUB r5, r3, r5 			@NewX = X - (Y >> i)
+	ASR r8, r3, r1 			@(X >> i)
+	SUB r4, r4, r8 			@(Y -= (X >> i)
+	MOV r3, r5 				@X = NewX
 	B   finL
 
 end:
