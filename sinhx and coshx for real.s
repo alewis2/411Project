@@ -12,12 +12,18 @@
 @r6 is address of A
 @r7 is first value in A?
 @r8 is temp
-@r9 is r1*4, 4 bytes per index, use for A[i]
+@r9 is r1*4, 4 bytes per index, use for A[i] (also used at end to house e^x)
 
 	.data
+@angle
 @A:	.word 45.0, 26.565, 14.0362, 7.12502, 3.57633, 1.78991, 0.895174, 0.447614, 0.223811, 0.111906, 0.055953, 0.027977
-@A: .word 2949120, 1740963.84, 919876.4032, 466945.31072, 234378.36288, 117303.54176, 58666.123264, 29334.831104, 14667.677696, 7333.871616, 3666.935808, 1833.500672
-A:	.word 2949120, 1740963, 919876, 466945, 234378, 117303, 58666, 29334, 14667, 7333, 3666, 1833
+@angle*2^16
+@A:	.word 2949120, 1740963, 919876, 466945, 234378, 117303, 58666, 29334, 14667, 7333, 3666, 1833
+@from a pdf
+@A: .word 35999, 16738, 8235, 4101, 2048, 1024, 512, 256, 127, 63
+@arctanh(2^-i)
+A:  .word 1740970 ,919879 ,466945 ,234379 ,117304 ,58666 ,29334 ,14667 ,7333 ,3666 ,1833 ,916
+
 
 .equ SWI_Exit,  0x11
 
@@ -30,9 +36,8 @@ ag_const:
 	
 main:
 	LDR r0, startAngle 		@load the starting angle into r1
-	LSL r0, r0, #16 		@shift left by 16 bits, basically multiply by 2^16
-	MOV r1, #0 				@index i for for loop
-	MOV r2, #12 			@hardcoded index @end index for foor loop, length of lookup table
+	MOV r1, #1 				@index i for for loop
+	MOV r2, #13 			@hardcoded index @end index for foor loop, length of lookup table
 	LDR r3, ag_const		@ X in C example
 	MOV r4, #0		 		@ Y in C example
 	LDR r6, =A		 		@ address of alpha
@@ -55,6 +60,9 @@ less_than:
 	SUB r5, r3, r5 			@ NewX = X - (Y >> i)
 	ASR r8, r3, r1 			@ (X >> i)
 	SUB r4, r4, r8 			@ (Y -= (X >> i)
+	CMP r1, #4
+	BEQ repeatG
+finL:
 	MOV r3, r5 				@ X = NewX
 	ADD r9, r1, r1 			@gotta add i by 4 so it can be used as A[i] correctly
 	ADD r9, r9, r9 			@^^
@@ -68,7 +76,10 @@ greater_than:
 	ASR r5, r4, r1 			@ (Y >>i)
 	ADD r5, r3, r5 			@ NewX = X + (Y >> i)
 	ASR r8, r3, r1 			@ (X >> i)
-	ADD r4, r4, r8 			@ (Y += (X >> i)
+	ADD r4, r4, r8 			@ (Y += (X >> i)	
+	CMP r1, #4
+	BEQ repeatG
+finG:
 	MOV r3, r5 				@ X = NewX
 	ADD r9, r1, r1 			@gotta add i by 4 so it can be used as A[i] correctly
 	ADD r9, r9, r9 			@^^
@@ -78,6 +89,21 @@ greater_than:
 	B after_if
 	
 	
+repeatG:
+	ASR r5, r4, r1 			@ (Y >>i)
+	ADD r5, r3, r5 			@ NewX = X + (Y >> i)
+	ASR r8, r3, r1 			@ (X >> i)
+	ADD r4, r4, r8 			@ (Y += (X >> i)
+	B   finG
+
+repeatL:
+	ASR r5, r4, r1 			@ (Y >>i)
+	SUB r5, r3, r5 			@ NewX = X - (Y >> i)
+	ASR r8, r3, r1 			@ (X >> i)
+	SUB r4, r4, r8 			@ (Y -= (X >> i)
+	B   finL
+
 end:
+	ADD r9, r3, r4			@find e^x
 	SWI SWI_Exit
 	
