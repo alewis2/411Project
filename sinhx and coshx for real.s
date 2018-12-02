@@ -23,7 +23,7 @@ A:	.word 2949120, 1740963, 919876, 466945, 234378, 117303, 58666, 29334, 14667, 
 
 @angle to do operations on
 startAngle: 
-	.long 45 				@starting with 45 degrees because its simple
+	.long 2981888 				@starting with 45.5 degrees because its simple
 	
 ag_const:
 	.long 79134 			@1.20749613601 shifted left by 16 bits
@@ -51,9 +51,9 @@ after_if:
 
 @if the current angle is less than 0
 less_than: 
-	LSR r5, r4, r1 			@ (Y >>i)
+	ASR r5, r4, r1 			@ (Y >>i)
 	SUB r5, r3, r5 			@ NewX = X - (Y >> i)
-	LSR r8, r3, r1 			@ (X >> i)
+	ASR r8, r3, r1 			@ (X >> i)
 	SUB r4, r4, r8 			@ (Y -= (X >> i)
 	MOV r3, r5 				@ X = NewX
 	ADD r9, r1, r1 			@gotta add i by 4 so it can be used as A[i] correctly
@@ -65,9 +65,9 @@ less_than:
 
 @if the current angle is greater than 0, r5 is NewX
 greater_than:
-	LSR r5, r4, r1 			@ (Y >>i)
+	ASR r5, r4, r1 			@ (Y >>i)
 	ADD r5, r3, r5 			@ NewX = X + (Y >> i)
-	LSR r8, r3, r1 			@ (X >> i)
+	ASR r8, r3, r1 			@ (X >> i)
 	ADD r4, r4, r8 			@ (Y += (X >> i)
 	MOV r3, r5 				@ X = NewX
 	ADD r9, r1, r1 			@gotta add i by 4 so it can be used as A[i] correctly
