@@ -23,14 +23,13 @@ A:	.word 2949120, 1740963, 919876, 466945, 234378, 117303, 58666, 29334, 14667, 
 
 @angle to do operations on
 startAngle: 
-	.long 3 				@starting with 45 degrees because its simple
+	.long 2981888 				@starting angle * 2^16
 	
 ag_const:
 	.long 39796 			@0.6072529350 shifted left by 16 bits
 	
 main:
 	LDR r0, startAngle 		@load the starting angle into r1
-	LSL r0, r0, #16 		@shift left by 16 bits, basically multiply by 2^16
 	MOV r1, #0 				@index i for for loop
 	MOV r2, #12 			@hardcoded index @end index for foor loop, length of lookup table
 	LDR r3, ag_const		@X in C example
